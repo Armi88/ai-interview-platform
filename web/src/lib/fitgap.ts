@@ -3,7 +3,7 @@ import type { FitGapReport, FitGapSummary, SkillComparison } from "@/types";
 
 /** The API renamed expected_level -> required_level; accept both. */
 export function requiredLevel(c: SkillComparison): number | null {
-  return c.required_level ?? c.expected_level ?? null;
+  return c.expected_level ?? null;
 }
 
 export function levelLabel(level: number | null | undefined): string {
@@ -22,7 +22,7 @@ export function summarizeComparisons(comparisons: SkillComparison[]): FitGapSumm
     assessed,
     match: count("match"),
     exceed: count("exceed"),
-    gap: count("gap"),
+    gap: count("gap") + count("not_assessed"),
     not_assessed: notAssessed,
     coverage_pct: total === 0 ? null : Math.round((assessed * 100) / total),
   };
