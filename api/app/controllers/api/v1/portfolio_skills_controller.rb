@@ -38,17 +38,19 @@ module Api
 
       private
 
+      # Refresh in place: the old report stays readable until the new one is
+      # written, so a failed or slow job never leaves the assessor with nothing.
       def regenerate_stale_fitgap_reports
         portfolio = @portfolio_skill.portfolio
-        FitGapReport.where(portfolio_id: portfolio.id).each do |report|
-          vacancy_id = report.vacancy_id
-          report.destroy
+        FitGapReport.where(portfolio_id: portfolio.id).pluck(:vacancy_id).each do |vacancy_id|
           FitGapGeneratorWorker.perform_async(portfolio.id, vacancy_id)
         end
       end
 
       def set_portfolio_skill
-        @portfolio_skill = PortfolioSkill.joins(:portfolio)
+        # Scoped to the current tenant: PortfolioSkill ids are sequential, so an
+        # unscoped find would let any assessor override another tenant's ratings.
+        @portfolio_skill = PortfolioSkill.where(portfolio_id: Portfolio.for_current_tenant.select(:id))
                                          .find(params[:id])
       rescue ActiveRecord::RecordNotFound
         json_error("Portfolio skill not found", :not_found)
