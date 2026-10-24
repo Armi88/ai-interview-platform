@@ -54,9 +54,7 @@ export function useFitGapReport(portfolioId: number | null, vacancyId: number) {
         if (isFresh(res.data.report)) return finish(res.data.report);
       } catch (e) {
         if (cancelled) return;
-        if (httpStatus(e) === 404) {
-          await portfoliosApi.triggerFitGap(portfolioId, vacancyId);
-        } else {
+        if (httpStatus(e) !== 404) {
           errors += 1;
           if (errors >= MAX_CONSECUTIVE_ERRORS) {
             setError("We couldn't reach the server while generating the report.");
