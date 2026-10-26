@@ -63,7 +63,7 @@ module FitGap
 
     # Pure comparison of one candidate level against one expected level.
     def self.compare_levels(candidate_level, expected_level)
-      return { result: 'not_assessed', delta: nil } if candidate_level.nil?
+      return { result: 'gap', delta: nil } if candidate_level.nil?
 
       delta  = candidate_level - expected_level
       result = delta.zero? ? 'match' : (delta.positive? ? 'exceed' : 'gap')
