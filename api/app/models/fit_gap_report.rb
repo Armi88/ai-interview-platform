@@ -7,9 +7,15 @@ class FitGapReport < ApplicationRecord
   belongs_to :portfolio
   belongs_to :vacancy
 
-  # An empty array is a legitimate value (a vacancy with no required skills),
-  # so we only reject nil. `presence: true` would reject [] and make the worker
-  # fail forever for such vacancies.
-  validates :skill_comparisons, exclusion: { in: [nil], message: "can't be nil" }
   validates :narrative_source, inclusion: { in: NARRATIVE_SOURCES }
+  validate :skill_comparisons_must_not_be_nil
+
+  private
+
+  # An empty array is a legitimate value (a vacancy with no required skills), so
+  # only nil is rejected. Rails' exclusion/inclusion validators check array values
+  # element by element, so `exclusion: { in: [nil] }` also rejected [].
+  def skill_comparisons_must_not_be_nil
+    errors.add(:skill_comparisons, "can't be nil") if skill_comparisons.nil?
+  end
 end
