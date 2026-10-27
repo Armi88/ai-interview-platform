@@ -50,7 +50,7 @@ module Api
       def set_portfolio_skill
         # Scoped to the current tenant: PortfolioSkill ids are sequential, so an
         # unscoped find would let any assessor override another tenant's ratings.
-        @portfolio_skill = PortfolioSkill.joins(:portfolio)
+        @portfolio_skill = PortfolioSkill.where(portfolio_id: Portfolio.for_current_tenant.select(:id))
                                          .find(params[:id])
       rescue ActiveRecord::RecordNotFound
         json_error("Portfolio skill not found", :not_found)
