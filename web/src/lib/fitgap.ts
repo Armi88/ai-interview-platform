@@ -22,7 +22,7 @@ export function summarizeComparisons(comparisons: SkillComparison[]): FitGapSumm
     assessed,
     match: count("match"),
     exceed: count("exceed"),
-    gap: count("gap") + count("not_assessed"),
+    gap: count("gap"),
     not_assessed: notAssessed,
     coverage_pct: total === 0 ? null : Math.round((assessed * 100) / total),
   };
